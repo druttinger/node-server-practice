@@ -1,0 +1,25 @@
+{
+  "name": "server-practice",
+  "version": "1.0.0",
+  "main": "module.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch practice.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druttinger/node-server-practice.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/druttinger/node-server-practice/issues"
+  },
+  "homepage": "https://github.com/druttinger/node-server-practice#readme",
+  "description": "",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
+}
