@@ -9,16 +9,15 @@ indexRouter.get("/", (req, res) => {
 
 indexRouter.get("/messages:id", (req, res) => {
   const messages = req.app.get("messages");
-  console.log(req.params.id, messages);
   if (req.params.id < messages.length) {
     res.render("message", {
       title: "My Message",
       message: messages[req.params.id],
     });
   } else {
-    res
-      .status(404)
-      .send(`I do not have ${req.params.id} message(s) yet, but maybe soon!`);
+    res.status(404)
+      .send(`I do not have ${req.params.id} message(s) yet, but maybe soon! <br>
+        <a href="/">Go back to the homepage</a>`);
   }
 });
 
