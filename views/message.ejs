@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+  </head>
+  <body>
+    <h1>Someone has a message for you!</h1>
+    <ul>
+      <h3><%= message.text ? message.text : "" %></h3>
+      <li><%= message.user ? message.user : "" %></li>
+      <li><%= message.added ? message.added : "" %></li>
+      <br />
+    </ul>
+    <br /><a href="./new">New Message</a> <br /><a href="./about.ejs"
+      >About me</a
+    >
+  </body>
+</html>

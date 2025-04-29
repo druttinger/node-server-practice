@@ -1,15 +1,14 @@
-const express = requrire('express');
+const express = require("express");
 const newRouter = express.Router();
 
-newRouter.get('/', (req, res) => {
-    res.send('Hello World');
-}
-);
+newRouter.get("/", (req, res) => res.render("form", { title: "Form" }));
 
-newRouter.post('/', (req, res) => {
-    const { name } = req.body;
-    res.send(`Hello ${name}`);
-}
-);
+newRouter.post("/submit", async (req, res) => {
+  const { author, message } = req.body;
+  const messages = req.app.get("messages");
+  messages.push({ text: message, user: author, added: new Date() });
+  res.redirect("../");
+});
 
-export default newRouter;
+// Export both newRouter and messages
+module.exports = newRouter;
