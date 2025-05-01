@@ -1,26 +1,19 @@
 {
-  "name": "server-practice",
+  "name": "validation",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch --env-file=.env app.js",
-    "start": "node app.js"
+    "populate": "node --env-file=.env ./db/populatedb.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/druttinger/node-server-practice.git"
-  },
-  "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/druttinger/node-server-practice/issues"
-  },
-  "homepage": "https://github.com/druttinger/node-server-practice#readme",
   "description": "",
   "dependencies": {
     "ejs": "^3.1.10",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "pg": "^8.15.6"
   }
 }

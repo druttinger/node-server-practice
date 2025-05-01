@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %></title>
-  </head>
-  <body>
-    This is the index page! <% if (messages.length > 0) { %>
-    <h1>Messages:</h1>
-    <ul>
-      <% for (let i = 0; i < messages.length; i++) { %>
-      <a href="/messages<%= i %>"
-        ><h3><%= messages[i].text ? messages[i].text : "" %></h3></a
-      >
-      <li><%= messages[i].user ? messages[i].user : "" %></li>
-      <li><%= messages[i].added ? messages[i].added : "" %></li>
-      <br />
-      <% } %>
-    </ul>
-    <% } else { %>
-    <h1>No messages</h1>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+</head>
+
+<body>
+  This is the index page!
+  <% if (messages.length > 0) { %>
+  <h1>Messages:</h1>
+  <ul>
+    <% for (let i = 0; i < messages.length; i++) { %>
+    <a href="/messages<%= i %>">
+      <h3><%= messages[i].message ? messages[i].message : "" %></h3>
+    </a>
+    <li><%= messages[i].username ? messages[i].username : "" %></li>
+    <li><%= messages[i].added ? messages[i].added : "" %></li>
+    <br />
     <% } %>
-    <br /><a href="./new">New Message</a> <br /><a href="./about.ejs"
-      >About me</a
-    >
-  </body>
+  </ul>
+  <% } else { %>
+  <h1>No messages</h1>
+  <% } %>
+  <form action="/" method="POST">
+    <label for="name">Filter</label>
+    <input type="text" id="name" name="name" required />
+    <input type="submit" value="Submit" />
+  </form>
+  <br /><a href="./new">New Message</a>
+</body>
+
 </html>

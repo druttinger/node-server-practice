@@ -1,8 +1,7 @@
-const fs = require("fs");
+// app.js
 const express = require("express");
 const app = express();
-const indexRouter = require("./routes/indexRouter");
-const newRouter = require("./routes/newRouter");
+const usersRouter = require("./routes/usersRouter");
 
 app.set("view engine", "ejs");
 
@@ -21,10 +20,7 @@ const messages = [
 app.set("messages", messages);
 
 app.use(express.urlencoded({ extended: true }));
-app.use("/new", newRouter);
-app.use("/", indexRouter);
+app.use("/", usersRouter);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`My first Express app - listening on port ${PORT}!`);
-});
+app.listen(PORT, () => console.log(`Express app listening on port ${PORT}!`));

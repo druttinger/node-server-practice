@@ -1,0 +1,37 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title><%= title %></title>
+</head>
+
+<body>
+  <h1><%= title %></h1>
+  <% if (locals.search !== "") {%>
+  <h2>Search results for "<%= locals.search %>":</h2>
+  <% } %>
+  <ul>
+    <% if (locals.users) {%>
+    <% users.forEach(function(user) { %>
+    <%# if (locals.search === "" || (user.firstName.includes(locals.search) || user.lastName.includes(locals.search) || user.email.includes(locals.search))) {%>
+    <li>ID: <%= user.id %>, Name: <%= user.firstName %> <%= user.lastName %>, Email: <%= user.email %><%=user.age ? ", Age: " + user.age : ""%><%=user.bio ? ", Bio: " + user.bio : ""%></li>
+    <br></li>
+    <a href="/<%= user.id %>/update">Update</a>
+    <!-- This time we're sending a POST request to our route, so we need a form. -->
+    <form action="/<%= user.id %>/delete" method="POST" style="display:inline;">
+      <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+    </form>
+    <%# } %>
+    <% }); %>
+    <% } %>
+  </ul>
+  <form action="/" method="POST">
+    <label for="search">Search:</label>
+    <input type="text" value="<%- locals.search %>" id="search" name="search" placeholder="Search by name or email">
+    <button type="submit" onclick="">Search</button>
+  </form>
+  <a href="/create">Create a user</a>
+</body>
+
+</html>
