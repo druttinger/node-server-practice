@@ -4,32 +4,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css"> -->
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
   <title><%= title %></title>
+  <script>
+    function updateSearchParams(param, value) {
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set(param, value);
+      window.location.search = urlParams.toString();
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+  </script>
 </head>
 
 <body>
-  This is the index page!
-  <% if (messages.length > 0) { %>
-  <h1>Messages:</h1>
-  <ul>
-    <% for (let i = 0; i < messages.length; i++) { %>
-    <a href="/messages<%= i %>">
-      <h3><%= messages[i].message ? messages[i].message : "" %></h3>
-    </a>
-    <li><%= messages[i].username ? messages[i].username : "" %></li>
-    <li><%= messages[i].added ? messages[i].added : "" %></li>
-    <br />
+  <div>
+    <form action="/" method="get">
+      <label for="filter">Filter</label>
+      <input type="text" id="filter" name="message" value="<%= origin || "" %>" />
+      <input type="submit" value="Submit" />
+      <!-- <button type="button" onclick="updateSearchParamsById('message', 'filter')">Filter</button> -->
+    </form>
+    <br /><a href="/new">New Message</a>
+    <br /><a href="/new/random">Random Message</a>
+    <br /><a href="/new/kristie">Kristie Message</a>
+    <% if (messages.length > 0) { %>
+    <h1>Messages<%= origin ? " from " + origin : ""%>:</h1>
+    <div>
+      <% for (let i = 0; i < messages.length; i++) { %>
+      <button action="/" method="get" onclick="updateSearchParams('username', '<%= messages[i].username %>')">
+        <h3><%= messages[i].username ? messages[i].username : "" %></h3>
+      </button>
+      <a href="/messages<%= messages[i].id %>">
+        <h4><%= messages[i].message ? messages[i].message : "" %></h4>
+      </a>
+      <br>
+      <button action="/" method="get" onclick="updateSearchParams('date', formatDate('<%= messages[i].added %>'))">
+        <h4><%= messages[i].added ? messages[i].added : "" %></h4>
+      </button>
+      <form action="/delete/" method="post">
+        <input type="hidden" name="id" value="<%= messages[i].id %>" />
+        <button type="submit">Delete</button>
+      </form>
+      <br />
+      <% } %>
+    </div>
+    <% } else { %>
+    <h1>No messages</h1>
     <% } %>
-  </ul>
-  <% } else { %>
-  <h1>No messages</h1>
-  <% } %>
-  <form action="/" method="POST">
-    <label for="name">Filter</label>
-    <input type="text" id="name" name="name" required />
-    <input type="submit" value="Submit" />
-  </form>
-  <br /><a href="./new">New Message</a>
+  </div>
 </body>
 
 </html>
