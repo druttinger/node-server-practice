@@ -4,7 +4,6 @@ const { POPULATE } = require("./templates");
 const SCHEMA = ["username", "message", "date"];
 
 async function getAllMessages(params = {}) {
-  console.log("Params: ", params);
   let queryString = "SELECT * FROM messages";
   const queryParams = [];
   let i = 1;
@@ -23,8 +22,6 @@ async function getAllMessages(params = {}) {
       i++;
     }
   }
-  console.log("Query String: ", queryString);
-  console.log("Query Params: ", queryParams);
   const { rows } = await pool.query(queryString, queryParams);
   return rows;
 }
