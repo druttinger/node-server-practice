@@ -26,15 +26,7 @@
 
 <body>
   <div>
-    <form action="/" method="get">
-      <label for="filter">Filter</label>
-      <input type="text" id="filter" name="message" value="<%= origin || "" %>" />
-      <input type="submit" value="Submit" />
-      <!-- <button type="button" onclick="updateSearchParamsById('message', 'filter')">Filter</button> -->
-    </form>
-    <br /><a href="/new">New Message</a>
-    <br /><a href="/new/random">Random Message</a>
-    <br /><a href="/new/kristie">Kristie Message</a>
+    <%- include('partials/navigation') %>
     <% if (messages.length > 0) { %>
     <h1>Messages<%= origin ? " from " + origin : ""%>:</h1>
     <div>

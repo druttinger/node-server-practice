@@ -1,14 +1,8 @@
 #! /usr/bin/env node
 
 const { Client } = require("pg");
-const {
-  CREATE_AUTHORS_TABLE,
-  CREATE_BOOKS_TABLE,
-  INSERT_AUTHORS,
-  INSERT_BOOKS,
-} = require("./templates");
 
-async function repopulate() {
+async function test() {
   const client = new Client({
     connectionString: `postgresql://${process.env.PGNAME}:${process.env.PGPASSWORD}@${process.env.HOST}:${process.env.PGPORT}/${process.env.DATABASE}`,
   });
@@ -17,17 +11,8 @@ async function repopulate() {
     await client.connect();
     console.log("Connected to the database.");
 
-    console.log("Creating authors table...");
-    await client.query(CREATE_AUTHORS_TABLE);
-
-    console.log("Creating books table...");
-    await client.query(CREATE_BOOKS_TABLE);
-
-    console.log("Inserting authors...");
-    await client.query(INSERT_AUTHORS);
-
-    console.log("Inserting books...");
-    await client.query(INSERT_BOOKS);
+    const { rows } = await client.query("SELECT * FROM books");
+    console.log("Current books in the database:", rows);
 
     console.log("Database seeded successfully.");
   } catch (error) {
@@ -38,4 +23,4 @@ async function repopulate() {
   }
 }
 
-repopulate();
+test();
