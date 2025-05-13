@@ -10,7 +10,7 @@ usersRouter.post("/delete/", usersController.deleteById);
 // usersRouter.get("/messages/:name", usersController.getMessagesbyName);
 usersRouter.get("/new", usersController.newMessageGet);
 usersRouter.post("/new/submit", usersController.newMessagePost);
-usersRouter.get("/new/random", usersController.newRandomPost);
+usersRouter.get("/new/random", usersController.newRandomBook);
 usersRouter.get("/new/kristie", usersController.newKristiePost);
 usersRouter.use(usersController.notFound);
 

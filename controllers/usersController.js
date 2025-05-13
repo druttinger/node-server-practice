@@ -1,8 +1,8 @@
 const db = require("../db/queries");
-const { randomMessage } = require("./randomMessage");
+// const { randomBook } = require("./randomBook");
 
 exports.displayGet = async (req, res) => {
-  const messages = (await db.getAllMessages(req.query)) || [];
+  const books = (await db.getAllTitles(req.query)) || [];
   // the following line is for testing purposes
   // let yesterdayMessage = randomMessage();
   // yesterdayMessage = {
@@ -12,9 +12,9 @@ exports.displayGet = async (req, res) => {
   // };
   // messages.push(yesterdayMessage);
   res.render("index", {
-    title: "Mini Messageboard",
+    title: "Mini Library",
     origin: req.query.message || "",
-    messages: messages,
+    books: books,
   });
 };
 
@@ -26,11 +26,11 @@ exports.displayPost = (req, res) => {
 
 exports.deleteById = async (req, res) => {
   const id = +req.body.id;
-  db.deleteId(id);
+  await db.deleteId(id);
   res.redirect("/");
 };
 
-exports.getMessagesById = async (req, res) => {
+exports.getTitlesById = async (req, res) => {
   const message = await db.getRowById(req.params.id);
   if (message) {
     res.render("message", {
@@ -58,21 +58,6 @@ exports.getMessagesbyName = async (req, res, next) => {
   next();
 };
 
-// exports.getMessagesbyName = async (req, res) => {
-//   const messages = (await db.getRowsByName(req.params.name)) || [];
-//   if (messages.length > 0) {
-//     res.render("index", {
-//       title: "Messages from " + req.params.name,
-//       origin: req.params.name,
-//       messages: messages,
-//     });
-//   } else {
-//     res.status(404)
-//       .send(`I do not have any messages from ${req.params.name} yet, but maybe soon! <br>
-//         <a href="/">Go back to the homepage</a>`);
-//   }
-// };
-
 exports.newMessageGet = (req, res) => {
   res.render("form", { title: "Form" });
 };
@@ -80,21 +65,19 @@ exports.newMessageGet = (req, res) => {
 exports.newMessagePost = async (req, res) => {
   const { author, message } = req.body;
   // const messages = req.app.get("messages") || [];
-  db.addMessage(author, message);
+  db.addBook(author, message);
   res.redirect("/");
 };
 
-exports.newRandomPost = async (req, res) => {
-  const { author, message } = randomMessage();
-  // const messages = req.app.get("messages") || [];
-  db.addMessage(author, message);
+exports.newRandomBook = async (req, res) => {
+  await db.addRandomBook();
   res.redirect("/");
 };
 
 exports.newKristiePost = async (req, res) => {
   const { author, message } = randomMessage(true);
   // const messages = req.app.get("messages") || [];
-  db.addMessage(author, message);
+  db.addBook(author, message);
   res.redirect("/");
 };
 

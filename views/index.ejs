@@ -5,7 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css"> -->
-  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <!-- <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"> -->
+  <link rel="stylesheet" href="/styles.css">
   <title><%= title %></title>
   <script>
     function updateSearchParams(param, value) {
@@ -27,29 +28,29 @@
 <body>
   <div>
     <%- include('partials/navigation') %>
-    <% if (messages.length > 0) { %>
-    <h1>Messages<%= origin ? " from " + origin : ""%>:</h1>
-    <div>
-      <% for (let i = 0; i < messages.length; i++) { %>
-      <button action="/" method="get" onclick="updateSearchParams('username', '<%= messages[i].username %>')">
-        <h3><%= messages[i].username ? messages[i].username : "" %></h3>
+    <% if (books.length > 0) { %>
+    <h1>Books<%= origin ? " from " + origin : ""%>:</h1>
+    <% for (let i = 0; i < books.length; i++) { %>
+    <div class="book">
+      <button action="/" method="get" onclick="updateSearchParams('title', '<%= books[i].title %>')">
+        <h3><%= books[i].id + ". " + (books[i].title ? books[i].title : "") %></h3>
       </button>
-      <a href="/messages<%= messages[i].id %>">
-        <h4><%= messages[i].message ? messages[i].message : "" %></h4>
+      <a href="/books<%= books[i].author %>">
+        <h4><%= books[i].author ? books[i].author : "" %></h4>
       </a>
       <br>
-      <button action="/" method="get" onclick="updateSearchParams('date', formatDate('<%= messages[i].added %>'))">
-        <h4><%= messages[i].added ? messages[i].added : "" %></h4>
+      <button action="/" method="get" onclick="updateSearchParams('date', formatDate('<%= books[i].pages %>'))">
+        <h4><%= books[i].pages ? books[i].pages : "" %></h4>
       </button>
       <form action="/delete/" method="post">
-        <input type="hidden" name="id" value="<%= messages[i].id %>" />
-        <button type="submit">Delete</button>
+        <input type="hidden" name="id" value="<%= books[i].id %>" />
+        <button class="delete" type="submit">Delete</button>
       </form>
       <br />
-      <% } %>
     </div>
+    <% } %>
     <% } else { %>
-    <h1>No messages</h1>
+    <h1>No books</h1>
     <% } %>
   </div>
 </body>
