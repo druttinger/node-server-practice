@@ -10,7 +10,6 @@ const randomBook = async (subject = "fantasy") => {
     } = jsonData.works[workNumber];
     let author = authors && authors.length > 0 ? authors[0].name : "Unknown";
     const book = { title, author, year };
-    console.log("Book:", book);
     return book;
   } catch {
     (error) => console.error("Error fetching books:", error);
@@ -32,7 +31,8 @@ const getAuthorBirthday = async (author) => {
       const year = parsedDate.getFullYear();
       const month = String(parsedDate.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
       const day = String(parsedDate.getDate()).padStart(2, "0");
-      birthDate = `${year}-${month}-${day}`;
+      if (isNaN(year) || isNaN(month) || isNaN(day)) birthDate = "01-01-0001";
+      else birthDate = `${year}-${month}-${day}`;
     }
 
     return birthDate;

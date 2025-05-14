@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS authors (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   name VARCHAR (255),
   birthdate DATE
-);
+  CONSTRAINT unique_name UNIQUE (name)
+  );
 `;
 
 const CREATE_BOOKS_TABLE = `
@@ -12,7 +13,11 @@ CREATE TABLE IF NOT EXISTS books (
   title VARCHAR (255),
   authorid INTEGER,
   pages INTEGER,
+  year INTEGER,
+  isbn VARCHAR (13),
   CONSTRAINT fk_author FOREIGN KEY (authorid) REFERENCES authors (id)
+  CONSTRAINT unique_title UNIQUE (title)
+  CONSTRAINT not_future_year CHECK (year <= EXTRACT(YEAR FROM CURRENT_DATE))
 );
 `;
 

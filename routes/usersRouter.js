@@ -6,12 +6,11 @@ const usersRouter = Router();
 usersRouter.get("/", usersController.displayGet);
 usersRouter.post("/", usersController.displayPost);
 usersRouter.post("/delete/", usersController.deleteById);
-// usersRouter.get("/messages:id", usersController.getMessagesById);
-// usersRouter.get("/messages/:name", usersController.getMessagesbyName);
-usersRouter.get("/new", usersController.newMessageGet);
-usersRouter.post("/new/submit", usersController.newMessagePost);
+usersRouter.post("/acquire/", usersController.acquireById);
+usersRouter.get("/new", usersController.newBookGet);
+usersRouter.post("/new/submit", usersController.newBookPost);
 usersRouter.get("/new/random", usersController.newRandomBook);
-usersRouter.get("/new/kristie", usersController.newKristiePost);
+usersRouter.get("/new/random/:subject", usersController.newRandomBook);
 usersRouter.use(usersController.notFound);
 
 module.exports = usersRouter;

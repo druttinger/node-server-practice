@@ -1,9 +1,14 @@
 <nav>
   <form action="/" method="get">
-    <label for="filter">Filter</label>
-    <input type="text" id="filter" name="title" value="<%= origin || "" %>" />
+    <label for="filter">Title Filter</label>
+    <input type="text" id="filter" name="title" value="" />
     <input type="submit" value="Submit" />
   </form>
-  <br /><a href="/new">New Message</a>
+  <br /><a href="/">Home</a>
+  <br /><a href="/new">New Book</a>
   <br /><a href="/new/random">Add Random Book</a>
+  <br /><a href="/new/random/love">Add Random Love Book</a>
+  <br /><a href="/new/random/science_fiction">Add Random SciFi Book</a>
+  <br /><a href="/new/random/history">Add Random History Book</a>
+
 </nav>

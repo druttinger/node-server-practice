@@ -1,19 +1,15 @@
 const db = require("../db/queries");
 // const { randomBook } = require("./randomBook");
 
+const keepParams = (req) => {
+  const requestData = new URLSearchParams(req.query);
+  return requestData.toString();
+};
+
 exports.displayGet = async (req, res) => {
   const books = (await db.getAllTitles(req.query)) || [];
-  // the following line is for testing purposes
-  // let yesterdayMessage = randomMessage();
-  // yesterdayMessage = {
-  //   ...yesterdayMessage,
-  //   username: yesterdayMessage.author,
-  //   added: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  // };
-  // messages.push(yesterdayMessage);
   res.render("index", {
     title: "Mini Library",
-    origin: req.query.message || "",
     books: books,
   });
 };
@@ -27,7 +23,14 @@ exports.displayPost = (req, res) => {
 exports.deleteById = async (req, res) => {
   const id = +req.body.id;
   await db.deleteId(id);
-  res.redirect("/");
+  res.redirect("/?" + keepParams(req));
+};
+
+exports.acquireById = async (req, res) => {
+  const id = +req.body.id;
+  const amount = req.body.amount ? +req.body.amount : 1;
+  await db.acquireId(id, amount);
+  res.redirect("/?" + keepParams(req));
 };
 
 exports.getTitlesById = async (req, res) => {
@@ -47,38 +50,23 @@ exports.getTitlesById = async (req, res) => {
   }
 };
 
-exports.getMessagesbyName = async (req, res, next) => {
-  console.log(req.originalUrl, req.url, req.path);
-  const url = new URL(req.originalUrl);
-  console.log("URL: ", url);
-  const searchParams = url.searchParams;
-  searchParams.append("name", req.params.name);
-  req.url = url.pathname + "?" + searchParams.toString();
-  console.log("New URL: ", req.url);
-  next();
-};
-
-exports.newMessageGet = (req, res) => {
+exports.newBookGet = (req, res) => {
   res.render("form", { title: "Form" });
 };
 
-exports.newMessagePost = async (req, res) => {
-  const { author, message } = req.body;
-  // const messages = req.app.get("messages") || [];
-  db.addBook(author, message);
-  res.redirect("/");
+exports.newBookPost = async (req, res) => {
+  const { title, author, pages, year, isbn, quantity } = req.body;
+  const id = await db.addBook(title, author, year, pages, isbn);
+  if (quantity !== undefined && quantity >= 0) {
+    await db.acquireId(id, quantity, true);
+  }
+  res.redirect("/?" + keepParams(req));
 };
 
 exports.newRandomBook = async (req, res) => {
-  await db.addRandomBook();
-  res.redirect("/");
-};
-
-exports.newKristiePost = async (req, res) => {
-  const { author, message } = randomMessage(true);
-  // const messages = req.app.get("messages") || [];
-  db.addBook(author, message);
-  res.redirect("/");
+  const subject = req.params.subject || "fantasy";
+  await db.addRandomBook(subject);
+  res.redirect("/?" + keepParams(req));
 };
 
 exports.notFound = (req, res) => {

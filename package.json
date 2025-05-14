@@ -7,6 +7,7 @@
     "dev": "node --watch --env-file=.env app.js",
     "devr": "node --watch --env-file=.env-remote app.js",
     "populate": "node --env-file=.env ./db/populatedb.js",
+    "populater": "node --env-file=.env-remote ./db/populatedb.js",
     "testdb": "node --env-file=.env ./db/test.js"
   },
   "author": "",
