@@ -4,13 +4,16 @@ const { Client } = require("pg");
 const {
   CREATE_AUTHORS_TABLE,
   CREATE_BOOKS_TABLE,
+  CREATE_INVENTORY_TABLE,
   INSERT_AUTHORS,
   INSERT_BOOKS,
 } = require("./templates");
 
 async function repopulate() {
   const client = new Client({
-    connectionString: `postgresql://${process.env.PGNAME}:${process.env.PGPASSWORD}@${process.env.HOST}:${process.env.PGPORT}/${process.env.DATABASE}`,
+    connectionString:
+      process.env.DATABASE_URL ||
+      `postgresql://${process.env.PGNAME}:${process.env.PGPASSWORD}@${process.env.HOST}:${process.env.PGPORT}/${process.env.DATABASE}`,
   });
 
   try {
@@ -22,6 +25,9 @@ async function repopulate() {
 
     console.log("Creating books table...");
     await client.query(CREATE_BOOKS_TABLE);
+
+    console.log("Creating inventory table...");
+    await client.query(CREATE_INVENTORY_TABLE);
 
     console.log("Inserting authors...");
     await client.query(INSERT_AUTHORS);

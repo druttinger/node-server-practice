@@ -80,7 +80,7 @@ async function acquireId(id, amount = 1, set = false) {
   const { rows } = await pool.query(
     `INSERT INTO inventory (bookid, quantity) 
      VALUES ($1, GREATEST (0, $2))
-     ON CONFLICT(bookid)
+     ON CONFLICT (bookid)
      DO UPDATE SET
      quantity = GREATEST(0, 
      ${setString} $2)
