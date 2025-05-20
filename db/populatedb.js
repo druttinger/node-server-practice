@@ -1,13 +1,7 @@
 #! /usr/bin/env node
 
 const { Client } = require("pg");
-const {
-  CREATE_AUTHORS_TABLE,
-  CREATE_BOOKS_TABLE,
-  CREATE_INVENTORY_TABLE,
-  INSERT_AUTHORS,
-  INSERT_BOOKS,
-} = require("./templates");
+const { CREATE_USERS_TABLE, CREATE_MESSAGES_TABLE } = require("./templates");
 
 async function repopulate() {
   const client = new Client({
@@ -20,20 +14,11 @@ async function repopulate() {
     await client.connect();
     console.log("Connected to the database.");
 
-    console.log("Creating authors table...");
-    await client.query(CREATE_AUTHORS_TABLE);
+    console.log("Creating USERS table...");
+    await client.query(CREATE_USERS_TABLE);
 
-    console.log("Creating books table...");
-    await client.query(CREATE_BOOKS_TABLE);
-
-    console.log("Creating inventory table...");
-    await client.query(CREATE_INVENTORY_TABLE);
-
-    console.log("Inserting authors...");
-    await client.query(INSERT_AUTHORS);
-
-    console.log("Inserting books...");
-    await client.query(INSERT_BOOKS);
+    console.log("Creating messages table...");
+    await client.query(CREATE_MESSAGES_TABLE);
 
     console.log("Database seeded successfully.");
   } catch (error) {
