@@ -25,6 +25,7 @@
 
 <body>
   <div>
+    <h1><%= authMessage ? authMessage : "Hi!"%></h1>
     <%- include('partials/navigation') %>
     <% if (!user) { %>
     <%- include('partials/signin') %>

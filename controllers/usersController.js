@@ -1,6 +1,6 @@
 const db = require("../db/queries");
 const bcrypt = require("bcryptjs");
-// const { randomBook } = require("./randomBook");
+const passport = require("passport");
 
 const keepParams = (req) => {
   const requestData = new URLSearchParams(req.query);
@@ -9,9 +9,11 @@ const keepParams = (req) => {
 
 exports.displayGet = async (req, res) => {
   const messages = (await db.getAllMessages(req.query)) || [];
+  console.log(req.session);
   res.render("index", {
     title: "Members Only Message Board",
     messages: messages || false,
+    authMessage: req.session.message,
     user: req.user || false,
   });
 };
@@ -43,6 +45,8 @@ exports.signIn = async (req, res, next) => {
     passport.authenticate("local", {
       successRedirect: "/",
       failureRedirect: "/",
+      failureMessage: true,
+      successMessage: true,
     });
   } catch (err) {
     return next(err);
