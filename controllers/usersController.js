@@ -1,4 +1,5 @@
 const db = require("../db/queries");
+const bcrypt = require("bcryptjs");
 // const { randomBook } = require("./randomBook");
 
 const keepParams = (req) => {
@@ -7,11 +8,45 @@ const keepParams = (req) => {
 };
 
 exports.displayGet = async (req, res) => {
-  const books = (await db.getAllTitles(req.query)) || [];
+  const messages = (await db.getAllMessages(req.query)) || [];
   res.render("index", {
-    title: "Mini Library",
-    books: books,
+    title: "Members Only Message Board",
+    messages: messages || false,
+    user: req.user || false,
   });
+};
+
+// TODO: update to use encryption
+exports.signUp = async (req, res, next) => {
+  try {
+    const hashedPassword = await bcrypt.hash(
+      req.body.password,
+      +process.env.SALT
+    );
+    await db.signUp(
+      req.body.username,
+      hashedPassword,
+      req.body.email,
+      req.body.firstname || "",
+      req.body.lastname || "",
+      req.body.status || "none"
+    );
+    res.redirect("/");
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// TODO: Update this to sign in
+exports.signIn = async (req, res, next) => {
+  try {
+    passport.authenticate("local", {
+      successRedirect: "/",
+      failureRedirect: "/",
+    });
+  } catch (err) {
+    return next(err);
+  }
 };
 
 // for filtering by name

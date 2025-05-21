@@ -26,36 +26,13 @@
 <body>
   <div>
     <%- include('partials/navigation') %>
-    <% if (books.length > 0) { %>
-    <h1>Books:</h1>
-    <% for (let i = 0; i < books.length; i++) { %>
-    <div class="book">
-      <button action="/" method="get" onclick="updateSearchParams('title', '<%= books[i].title %>')">
-        <h3><%= books[i].id + ". " + (books[i].title ? books[i].title : "-") %></h3>
-      </button>
-      <button action="/" method="get" onclick="updateSearchParams('author', '<%= books[i].author %>')">
-        <h4><%= books[i].author ? books[i].author : "-" %></h4>
-      </button>
-      <button action="/" method="get" onclick="updateSearchParams('pages', '<%= books[i].pages %>')">
-        <h4><%= books[i].pages ? books[i].pages : "-" %></h4>
-      </button>
-      <button action="/" method="get" onclick="updateSearchParams('year', '<%= books[i].year %>')">
-        <h4><%= books[i].year ? books[i].year : "-" %></h4>
-      </button><br />
-      <h3>Current quantity: <%= books[i].quantity || 0 %></h3>
-      <form action="/acquire/" method="post">
-        <input type="hidden" name="id" value="<%= books[i].id %>" />
-        <input type="number" name="amount" value="0" />
-        <button class="delete" type="submit">Acquire Specified</button>
-      </form>
-      <form action="/delete/" method="post">
-        <input type="hidden" name="id" value="<%= books[i].id %>" />
-        <button class="delete" type="submit">Delete</button>
-      </form>
-    </div>
-    <% } %>
+    <% if (!user) { %>
+    <%- include('partials/signin') %>
+    <%- include('partials/signup') %>
+
+
     <% } else { %>
-    <h1>No books</h1>
+    <h1>No messages yet!</h1>
     <% } %>
   </div>
 </body>

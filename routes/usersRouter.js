@@ -5,6 +5,8 @@ const usersRouter = Router();
 
 usersRouter.get("/", usersController.displayGet);
 usersRouter.post("/", usersController.displayPost);
+usersRouter.post("/signup/", usersController.signUp);
+usersRouter.post("/signin/", usersController.signIn);
 usersRouter.post("/delete/", usersController.deleteById);
 usersRouter.post("/acquire/", usersController.acquireById);
 usersRouter.get("/new", usersController.newBookGet);

@@ -3,12 +3,11 @@ const { POPULATE } = require("./templates");
 const { randomBook, getAuthorBirthday } = require("../controllers/randomBook");
 const SCHEMA = ["title", "author", "pages", "year", "isbn"];
 
-async function getAllTitles(params = {}) {
+async function getAllMessages(params = {}) {
   let queryString = `SELECT 
-     books.id AS id, title, name AS author, pages, year, quantity
-     FROM books 
-     JOIN authors ON books.authorid = authors.id
-     LEFT JOIN inventory ON books.id = inventory.bookid`;
+     messages.id AS id, title, username, message
+     FROM messages 
+     JOIN users ON messages.authorid = users.id`;
   const queryParams = [];
   let i = 1;
   for (const key in params) {
@@ -28,6 +27,28 @@ async function getAllTitles(params = {}) {
   }
   const { rows } = await pool.query(queryString, queryParams);
   return rows;
+}
+
+async function signUp(
+  username,
+  hashedPassword,
+  email,
+  firstname,
+  lastname,
+  status
+) {
+  await pool.query(
+    `INSERT INTO users (username, password, email, firstname, lastname, status) 
+      VALUES ($1, $2, $3, $4, $5, $6)`,
+    [
+      username,
+      hashedPassword,
+      email,
+      firstname || "",
+      lastname || "",
+      status || "none",
+    ]
+  );
 }
 
 async function getAuthorId(name) {
@@ -135,7 +156,8 @@ async function addRandomBook(subject = "fantasy") {
 }
 
 module.exports = {
-  getAllTitles,
+  getAllMessages,
+  signUp,
   getRowsByTitle,
   getRowById,
   deleteId,
