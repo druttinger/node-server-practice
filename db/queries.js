@@ -3,13 +3,18 @@ const { POPULATE } = require("./templates");
 const { randomBook, getAuthorBirthday } = require("../controllers/randomBook");
 const SCHEMA = ["title", "author", "pages", "year", "isbn"];
 
-async function getAllMessages(params = {}) {
+exports.getAllMessages = async (params = {}, id) => {
   let queryString = `SELECT 
-     messages.id AS id, title, username, message
+     messages.id AS id, title, username, users.id AS userid, message, email, created_at,
+     CASE WHEN users.id = ANY((SELECT friends FROM users WHERE id = $1)::int[]) 
+     THEN 'true' ELSE 'false' END AS is_friend,
+     CASE WHEN $1 = ANY(users.friends::int[]) 
+     THEN 'true' ELSE 'false' END AS has_friended
      FROM messages 
-     JOIN users ON messages.authorid = users.id`;
-  const queryParams = [];
-  let i = 1;
+     JOIN users ON messages.authorid = users.id
+     WHERE users.id <> ALL ((SELECT block FROM users WHERE id = $1)::int[])`;
+  const queryParams = [id];
+  let i = 2;
   for (const key in params) {
     if (key === "year") {
       queryString += ` ${i === 1 ? "WHERE" : "AND"} ${key} = $${i}`;
@@ -26,17 +31,18 @@ async function getAllMessages(params = {}) {
     }
   }
   const { rows } = await pool.query(queryString, queryParams);
+  console.log(rows);
   return rows;
-}
+};
 
-async function signUp(
+exports.signUp = async (
   username,
   hashedPassword,
   email,
   firstname,
   lastname,
   status
-) {
+) => {
   await pool.query(
     `INSERT INTO users (username, password, email, firstname, lastname, status) 
       VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -49,18 +55,70 @@ async function signUp(
       status || "none",
     ]
   );
-}
+};
 
-async function getAuthorId(name) {
+exports.addMessage = async (title, message, authorId) => {
+  const { rows } = await pool.query(
+    `INSERT INTO messages (title, message, authorid) 
+     VALUES ($1, $2, $3) 
+     RETURNING id`,
+    [title, message, authorId]
+  );
+  return rows[0].id;
+};
+
+exports.getBlockedUsers = async (userid) => {
+  const { rows } = await pool.query(
+    `SELECT id, username FROM users WHERE 
+    id = ANY((SELECT block FROM users WHERE id = $1)::int[])`,
+    [userid]
+  );
+  return rows;
+};
+
+exports.blockUser = async (userid, targetid) => {
+  const { rows } = await pool.query(
+    `UPDATE users SET block = array_append(block, $1) WHERE id = $2 RETURNING *`,
+    [targetid, userid]
+  );
+  return rows[0];
+};
+
+exports.unblockUser = async (userid, targetid) => {
+  const { rows } = await pool.query(
+    `UPDATE users SET block = array_remove(block, $1) WHERE id = $2 RETURNING *`,
+    [targetid, userid]
+  );
+  return rows[0];
+};
+
+exports.friendUser = async (userid, targetid) => {
+  const { rows } = await pool.query(
+    `UPDATE users SET friends = array_append(friends, $1) WHERE id = $2 RETURNING *`,
+    [targetid, userid]
+  );
+  return rows[0];
+};
+
+exports.defriendUser = async (userid, targetid) => {
+  console.log("Defriend");
+  const { rows } = await pool.query(
+    `UPDATE users SET friends = array_remove(friends, $1) WHERE id = $2 RETURNING *`,
+    [targetid, userid]
+  );
+  return rows[0];
+};
+
+exports.getAuthorId = async (name) => {
   const { rows } = await pool.query(
     "SELECT id FROM authors WHERE name ILIKE $1",
     [name]
   );
   return rows[0] ? rows[0].id : null;
-}
+};
 
-async function addAuthor(name) {
-  const existingAuthorId = await getAuthorId(name);
+exports.addAuthor = async (name) => {
+  const existingAuthorId = await exports.getAuthorId(name);
   if (existingAuthorId) {
     return existingAuthorId;
   }
@@ -71,31 +129,30 @@ async function addAuthor(name) {
     [name, birthdate]
   );
   return rows[0].id;
-}
+};
 
-async function getRowsByTitle(title) {
+exports.getRowsByTitle = async (title) => {
   const { rows } = await pool.query(
     "SELECT * FROM books WHERE title ILIKE $1",
     [`%${title}%`]
   );
   return rows;
-}
+};
 
-async function getRowById(id) {
+exports.getRowById = async (id) => {
   const { rows } = await pool.query("SELECT * FROM books WHERE id = $1", [id]);
   return rows[0];
-}
+};
 
-async function deleteTitle(title) {
+exports.deleteTitle = async (title) => {
   await pool.query("DELETE FROM books WHERE title = $1", [`"${title}"`]);
-}
+};
 
-async function deleteId(id) {
-  await pool.query("DELETE FROM inventory WHERE bookid = $1", [id]);
-  await pool.query("DELETE FROM books WHERE id = $1", [id]);
-}
+exports.deleteId = async (id) => {
+  await pool.query("DELETE FROM messages WHERE id = $1", [id]);
+};
 
-async function acquireId(id, amount = 1, set = false) {
+exports.acquireId = async (id, amount = 1, set = false) => {
   // determine if we are setting or adding to the quantity
   const setString = set ? "" : "inventory.quantity +";
   const { rows } = await pool.query(
@@ -109,24 +166,24 @@ async function acquireId(id, amount = 1, set = false) {
     [id, amount]
   );
   return rows[0];
-}
+};
 
-async function deleteAllTitles() {
+exports.deleteAllTitles = async () => {
   await pool.query("DELETE FROM books");
-}
+};
 
-async function repopulate() {
+exports.repopulate = async () => {
   await pool.query(POPULATE);
-}
+};
 
-async function addBook(
+exports.addBook = async (
   title,
   author,
   year = 0,
   pages = "unknown",
   isbn = "unknown"
-) {
-  const authorId = await addAuthor(author);
+) => {
+  const authorId = await exports.addAuthor(author);
   const { rows } = await pool.query(
     `INSERT INTO books (title, authorid, pages, year, isbn) 
      VALUES ($1, $2, $3, $4, $5) 
@@ -137,9 +194,9 @@ async function addBook(
     [title, authorId, pages, year, isbn]
   );
   return rows[0].id;
-}
+};
 
-async function addRandomBook(subject = "fantasy") {
+exports.addRandomBook = async (subject = "fantasy") => {
   let rowCount;
   do {
     const {
@@ -147,25 +204,10 @@ async function addRandomBook(subject = "fantasy") {
       author = "Unknown",
       year = 0,
     } = await randomBook(subject);
-    const authorId = await addAuthor(author);
+    const authorId = await exports.addAuthor(author);
     ({ rowCount } = await pool.query(
       "INSERT INTO books (title, authorid, year) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
       [title, authorId, year]
     ));
   } while (rowCount === 0);
-}
-
-module.exports = {
-  getAllMessages,
-  signUp,
-  getRowsByTitle,
-  getRowById,
-  deleteId,
-  deleteAllTitles,
-  deleteTitle,
-  repopulate,
-  addBook,
-  addRandomBook,
-  addAuthor,
-  acquireId,
 };

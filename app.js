@@ -10,27 +10,36 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-passport.use(localAuth);
+app.use(session({ secret: "dogs", resave: false, saveUninitialized: false }));
+app.use(passport.session());
+passport.use(localAuth.strategy);
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
-passport.deserializeUser(async (id, done) => {
-  try {
-    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [
-      id,
-    ]);
-    const user = rows[0];
+passport.deserializeUser(localAuth.deserializeUser);
 
-    done(null, user, { message: `Welcome back, ${user.username}!` });
-  } catch (err) {
-    done(err);
-  }
-});
+console.log("Hang test 1");
 
-app.use(session({ secret: "dogs", resave: false, saveUninitialized: false }));
-app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+console.log("Hang test 2");
+
+app.post("/signin/", async (req, res, next) => {
+  try {
+    console.log("test");
+    passport.authenticate("local", {
+      successRedirect: "/",
+      failureRedirect: "/",
+      failureMessage: true,
+      successMessage: true,
+    })(req, res, next);
+    console.log("test2", req.session);
+  } catch (err) {
+    return next(err);
+  }
+});
+console.log("Hang test 3");
+
 app.use("/", usersRouter);
 
 const PORT = process.env.PORT || 3000;

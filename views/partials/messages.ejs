@@ -1,0 +1,41 @@
+  <% if (messages){ %>
+  <h1>Messages:</h1>
+  <% messages.forEach(function(message) { %>
+  <div class="group">
+    <h2><%= message.title %>
+      <%  if (user.status === "admin" || user.username === message.username) { %>
+      <form action="/delete/" method="post">
+        <input type="hidden" name="target" value="<%= message.id %>">
+        <input type="hidden" name="creator" value="<%= message.username %>">
+        <button class="groupbutton">&#x2718</button>
+      </form>
+      <% } %>
+    </h2>
+    <p><%= message.message %></p>
+    <div>
+      <% if (message.has_friended === 'true') { %>
+      <span class="friend">&#x2764</span>
+      <%}%>
+          Username: <%= user.username === message.username || user.status === "member" || user.status === "admin" ? message.username : "(hidden)" %>
+      <% if (message.userid !== user.id) { %>
+      <form action="/block/" method="post"><input type="hidden" name="target" value="<%= message.userid %>">
+        <button class="groupbutton">Block</button>
+      </form>
+      <% } %>
+      <% if (message.is_friend === 'true') { %>
+      <form action="/defriend/" method="post"><input type="hidden" name="target" value="<%= message.userid %>">
+        <button class="groupbutton">Toggle Friend <span class="heart">&#x2718</span></button>
+      </form>
+      <% } else if (user.id !== message.userid) { %>
+      <form action="/friend/" method="post"><input type="hidden" name="target" value="<%= message.userid %>">
+        <button class="groupbutton">Toggle Friend &#x2764</button>
+      </form>
+      <% } %>
+    </div>
+    <p>Email address: <%=  user.id === message.userid || user.status === "admin" || message.has_friended ? (message.email ? message.email :"(none)") : "(hidden)" %></p>
+    <p>Created at: <%= message.created_at %></p>
+  </div>
+  <% }) %>
+  <% }else{%>
+  <h1>No messages yet!</h1>
+  <% } %>

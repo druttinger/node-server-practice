@@ -3,10 +3,16 @@ button {
   border: 0;
   background-color: rgb(red, green, blue, 0);
   cursor: pointer;
+  display: inline;
 }
 
 button:hover {
   color: blue;
+}
+
+input,
+form {
+  display: inline-block;
 }
 
 button.delete {
@@ -31,13 +37,60 @@ button.delete {
   background-color: bisque;
 }
 
-.auth {
+.group {
   border: 2px solid black;
+  background-color: white;
   border-radius: 10px;
   margin: 10px;
   padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.auth > * {
+.group > * {
   margin: 10px;
+}
+
+.groupbutton {
+  background-color: lightgrey;
+  border: 1px solid black;
+  color: black;
+}
+
+.groupbutton:hover {
+  background-color: grey;
+  color: white;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  color: white;
+  background-color: grey;
+  padding: 10px;
+  width: 100%;
+  top: 0;
+  position: fixed;
+}
+
+.main {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: lightgrey;
+}
+
+.signout {
+  background-color: grey;
+  border: 1px solid lightgrey;
+  color: white;
+  height: 100%;
+}
+.signout:hover {
+  background-color: lightgrey;
+  color: black;
+}
+
+.friend {
+  font-size: xx-large;
+  color: red;
 }
