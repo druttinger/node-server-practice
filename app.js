@@ -18,11 +18,8 @@ passport.serializeUser((user, done) => {
 });
 passport.deserializeUser(localAuth.deserializeUser);
 
-console.log("Hang test 1");
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-console.log("Hang test 2");
 
 app.post("/signin/", async (req, res, next) => {
   try {
@@ -38,7 +35,6 @@ app.post("/signin/", async (req, res, next) => {
     return next(err);
   }
 });
-console.log("Hang test 3");
 
 app.use("/", usersRouter);
 

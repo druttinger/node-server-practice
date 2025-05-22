@@ -20,7 +20,6 @@ exports.displayGet = async (req, res) => {
   });
 };
 
-// TODO: update to use encryption
 exports.signUp = async (req, res, next) => {
   try {
     const hashedPassword = await bcrypt.hash(
@@ -49,20 +48,6 @@ exports.signOut = (req, res, next) => {
     res.redirect("/");
   });
 };
-
-// Moved to app.js
-// exports.signIn = async (req, res, next) => {
-//   try {
-//     passport.authenticate("local", {
-//       successRedirect: "/",
-//       failureRedirect: "/",
-//       failureMessage: true,
-//       successMessage: true,
-//     });
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
 
 exports.blockUser = async (req, res) => {
   if (+req.user?.id === +req.body.target) {
@@ -113,34 +98,6 @@ exports.deleteById = async (req, res) => {
   res.redirect("/?" + keepParams(req));
 };
 
-exports.acquireById = async (req, res) => {
-  const id = +req.body.id;
-  const amount = req.body.amount ? +req.body.amount : 1;
-  await db.acquireId(id, amount);
-  res.redirect("/?" + keepParams(req));
-};
-
-exports.getTitlesById = async (req, res) => {
-  const message = await db.getRowById(req.params.id);
-  if (message) {
-    res.render("message", {
-      title: "My Message",
-      message: message,
-    });
-  } else if (+req.params.id === 0) {
-    res.status(404).send(`Lowest valid message index is 1! <br>
-        <a href="/">Go back to the homepage</a>`);
-  } else {
-    res.status(404)
-      .send(`I do not have ${req.params.id} message(s) yet, but maybe soon! <br>
-        <a href="/">Go back to the homepage</a>`);
-  }
-};
-
-exports.newBookGet = (req, res) => {
-  res.render("form", { title: "Form" });
-};
-
 exports.submitMessage = async (req, res) => {
   const { title, message } = req.body;
   console.log(req.user?.id ? req.user.id : 0);
@@ -150,21 +107,6 @@ exports.submitMessage = async (req, res) => {
   }
   const userid = req.user.id ? req.user.id : 0;
   const id = await db.addMessage(title, message, userid);
-  res.redirect("/?" + keepParams(req));
-};
-
-exports.newBookPost = async (req, res) => {
-  const { title, author, pages, year, isbn, quantity } = req.body;
-  const id = await db.addBook(title, author, year, pages, isbn);
-  if (quantity !== undefined && quantity >= 0) {
-    await db.acquireId(id, quantity, true);
-  }
-  res.redirect("/?" + keepParams(req));
-};
-
-exports.newRandomBook = async (req, res) => {
-  const subject = req.params.subject || "fantasy";
-  await db.addRandomBook(subject);
   res.redirect("/?" + keepParams(req));
 };
 

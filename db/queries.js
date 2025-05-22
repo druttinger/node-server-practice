@@ -1,6 +1,5 @@
 const pool = require("./pool");
 const { POPULATE } = require("./templates");
-const { randomBook, getAuthorBirthday } = require("../controllers/randomBook");
 const SCHEMA = ["title", "author", "pages", "year", "isbn"];
 
 exports.getAllMessages = async (params = {}, id) => {
@@ -109,36 +108,6 @@ exports.defriendUser = async (userid, targetid) => {
   return rows[0];
 };
 
-exports.getAuthorId = async (name) => {
-  const { rows } = await pool.query(
-    "SELECT id FROM authors WHERE name ILIKE $1",
-    [name]
-  );
-  return rows[0] ? rows[0].id : null;
-};
-
-exports.addAuthor = async (name) => {
-  const existingAuthorId = await exports.getAuthorId(name);
-  if (existingAuthorId) {
-    return existingAuthorId;
-  }
-  // If the author doesn't exist, fetch their birthdate
-  const birthdate = await getAuthorBirthday(name);
-  const { rows } = await pool.query(
-    "INSERT INTO authors (name, birthdate) VALUES ($1, $2) RETURNING id",
-    [name, birthdate]
-  );
-  return rows[0].id;
-};
-
-exports.getRowsByTitle = async (title) => {
-  const { rows } = await pool.query(
-    "SELECT * FROM books WHERE title ILIKE $1",
-    [`%${title}%`]
-  );
-  return rows;
-};
-
 exports.getRowById = async (id) => {
   const { rows } = await pool.query("SELECT * FROM books WHERE id = $1", [id]);
   return rows[0];
@@ -174,40 +143,4 @@ exports.deleteAllTitles = async () => {
 
 exports.repopulate = async () => {
   await pool.query(POPULATE);
-};
-
-exports.addBook = async (
-  title,
-  author,
-  year = 0,
-  pages = "unknown",
-  isbn = "unknown"
-) => {
-  const authorId = await exports.addAuthor(author);
-  const { rows } = await pool.query(
-    `INSERT INTO books (title, authorid, pages, year, isbn) 
-     VALUES ($1, $2, $3, $4, $5) 
-     ON CONFLICT (title) 
-     DO UPDATE SET
-     authorid = $2, pages = $3, year = $4, isbn = $5
-     RETURNING id`,
-    [title, authorId, pages, year, isbn]
-  );
-  return rows[0].id;
-};
-
-exports.addRandomBook = async (subject = "fantasy") => {
-  let rowCount;
-  do {
-    const {
-      title = "Unknown",
-      author = "Unknown",
-      year = 0,
-    } = await randomBook(subject);
-    const authorId = await exports.addAuthor(author);
-    ({ rowCount } = await pool.query(
-      "INSERT INTO books (title, authorid, year) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
-      [title, authorId, year]
-    ));
-  } while (rowCount === 0);
 };
