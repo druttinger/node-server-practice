@@ -113,10 +113,6 @@ exports.getRowById = async (id) => {
   return rows[0];
 };
 
-exports.deleteTitle = async (title) => {
-  await pool.query("DELETE FROM books WHERE title = $1", [`"${title}"`]);
-};
-
 exports.deleteId = async (id) => {
   await pool.query("DELETE FROM messages WHERE id = $1", [id]);
 };
@@ -135,10 +131,6 @@ exports.acquireId = async (id, amount = 1, set = false) => {
     [id, amount]
   );
   return rows[0];
-};
-
-exports.deleteAllTitles = async () => {
-  await pool.query("DELETE FROM books");
 };
 
 exports.repopulate = async () => {

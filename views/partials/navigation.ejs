@@ -6,8 +6,11 @@
   </form> -->
   <a href="/">Home</a>
   <% if (user) { %>
-  <form class="signout" action="signout" method="post"><button class="signout">Sign Out</button></form>
+  <form class="signout" action="signout" method="post">
+    <button class="signout">Sign Out</button>
+  </form>
+  <% } else { %>
+  <%- include('./signin') %>
   <% } %>
-
 
 </nav>

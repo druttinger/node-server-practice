@@ -16,10 +16,7 @@
 
       <h1><%= authMessage ? authMessage : ""%></h1>
       <% if (!user) { %>
-      <%- include('partials/signin') %>
       <%- include('partials/signup') %>
-
-
       <% } else {%>
       <h2>Welcome, <%= user.username %>!</h2>
       <%- include('partials/messages') %>

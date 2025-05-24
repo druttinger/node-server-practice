@@ -10,7 +10,6 @@ exports.displayGet = async (req, res) => {
   const messages =
     (await db.getAllMessages(req.query, req.user?.id || 0)) || [];
   const blocked = req.user ? await db.getBlockedUsers(req.user.id) : [];
-  console.log("blocked", blocked, req.user);
   res.render("index", {
     title: "Members Only Message Board",
     messages: messages || false,

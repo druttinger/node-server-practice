@@ -11,8 +11,16 @@ button:hover {
 }
 
 input,
-form {
+form,
+button,
+label {
   display: inline-block;
+}
+
+.signin {
+  display: flex;
+  justify-content: space-between;
+  align-items: space-between;
 }
 
 button.delete {

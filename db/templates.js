@@ -6,7 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
   lastname VARCHAR (255),
   email VARCHAR (255) UNIQUE,
   password VARCHAR (255),
-  status  VARCHAR (10)
+  status  VARCHAR (10),
+  block INTEGER[] DEFAULT '{}',
+  friends INTEGER[] DEFAULT '{}'
   );
 `;
 

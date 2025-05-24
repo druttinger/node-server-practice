@@ -18,19 +18,20 @@ passport.serializeUser((user, done) => {
 });
 passport.deserializeUser(localAuth.deserializeUser);
 
+const passportAuth = passport.authenticate("local", {
+  successRedirect: "/",
+  failureRedirect: "/",
+  failureMessage: true,
+  successMessage: true,
+});
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(express.json());
 
 app.post("/signin/", async (req, res, next) => {
   try {
-    console.log("test");
-    passport.authenticate("local", {
-      successRedirect: "/",
-      failureRedirect: "/",
-      failureMessage: true,
-      successMessage: true,
-    })(req, res, next);
-    console.log("test2", req.session);
+    passportAuth(req, res, next);
   } catch (err) {
     return next(err);
   }
