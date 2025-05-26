@@ -57,7 +57,6 @@ module.exports.validateUser = [
     .notEmpty()
     .withMessage("Username is required")
     .custom(async (value) => {
-      console.log("value", value);
       const user = await findUserByField("username", value);
       if (user) {
         throw new Error("Username already in use");
@@ -86,10 +85,9 @@ module.exports.checkRules = (req, res, next) => {
 };
 
 const findUserByField = async (field, value) => {
-  const { rows } = await pool.query(`SELECT * FROM users WHERE $1 = '$2'`, [
+  const { rows } = await pool.query(`SELECT * FROM users WHERE $1 = $2`, [
     field,
     value,
   ]);
-  console.log(field, value, "ready?", rows, "done");
   return rows[0];
 };

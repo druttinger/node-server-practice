@@ -99,7 +99,7 @@ exports.deleteById = async (req, res) => {
 
 exports.submitMessage = async (req, res) => {
   const { title, message } = req.body;
-  console.log(req.user?.id ? req.user.id : 0);
+  req.user?.id ? req.user.id : 0;
   if (!req.user) {
     req.session.message = "You must be logged in to post a message!";
     return res.redirect("/?" + keepParams(req));

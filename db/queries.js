@@ -30,7 +30,6 @@ exports.getAllMessages = async (params = {}, id) => {
     }
   }
   const { rows } = await pool.query(queryString, queryParams);
-  console.log(rows);
   return rows;
 };
 
@@ -44,7 +43,7 @@ exports.signUp = async (
 ) => {
   await pool.query(
     `INSERT INTO users (username, password, email, firstname, lastname, status) 
-      VALUES ($1, $2, $3, $4, $5, $6)`,
+      VALUES ($1, $2, NULLIF($3, ''), $4, $5, $6)`,
     [
       username,
       hashedPassword,
@@ -100,7 +99,6 @@ exports.friendUser = async (userid, targetid) => {
 };
 
 exports.defriendUser = async (userid, targetid) => {
-  console.log("Defriend");
   const { rows } = await pool.query(
     `UPDATE users SET friends = array_remove(friends, $1) WHERE id = $2 RETURNING *`,
     [targetid, userid]
